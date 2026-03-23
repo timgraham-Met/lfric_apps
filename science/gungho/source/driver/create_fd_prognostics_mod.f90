@@ -30,7 +30,7 @@ module create_fd_prognostics_mod
                                              read_w2h_wind,               &
                                              sst_source,                  &
                                              sst_source_start_dump,       &
-                                             sea_ice_source,               &
+                                             sea_ice_source,              &
                                              sea_ice_source_start_dump
   use nlsizes_namelist_mod,           only : sm_levels
   use jules_control_init_mod,         only : n_land_tile, n_sea_ice_tile
