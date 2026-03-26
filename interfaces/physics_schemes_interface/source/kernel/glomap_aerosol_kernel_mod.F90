@@ -267,7 +267,7 @@ subroutine glomap_aerosol_code( nlayers,                                       &
   !---------------------------------------
 
   use glomap_clim_interface_mod,          only: glomap_clim_interface
-
+  use cloud_inputs_mod,                   only: rhcrit
   use planet_constants_mod,               only: p_zero, kappa
 
   use ukca_config_specification_mod,      only: i_sussbcocdu_7mode
@@ -488,6 +488,7 @@ subroutine glomap_aerosol_code( nlayers,                                       &
     cloud_blk_frac_um(k) = cf_bulk(map_wth(1) + k)
     cloud_liq_frac_um(k) = cf_liquid(map_wth(1) + k)
     rh_crit_um(k)        = rh_crit(map_wth(1) + k)
+    rh_crit_um(k)        = rhcrit(k)
   end do
 
   !-----------------------------------------------------------------------

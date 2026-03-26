@@ -899,7 +899,7 @@ contains
         cca2d_md_opt        = 2
         cca2d_sh_opt        = 2
         cca_dp_knob         = 0.80_r_um
-        cca_md_knob         = 0.80_r_um
+        cca_md_knob         = 1.20_r_um
         cca_sh_knob         = 0.40_r_um
         ccw_dp_knob         = 1.00_r_um
         ccw_for_precip_opt  = 4
@@ -943,7 +943,7 @@ contains
         n_conv_calls        = number_of_convection_substeps
         pr_melt_frz_opt     = 2
         qstice              = 3.5000e-3_r_um
-        r_det               = 0.5000_r_um
+        r_det               = 0.6600_r_um
         rad_cloud_decay_opt = 0
         sh_pert_opt         = 1
         t_melt_snow         = 276.15_r_um
