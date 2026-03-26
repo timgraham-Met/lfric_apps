@@ -441,18 +441,6 @@ contains
     character(*), intent(in)          :: program_name
     type(modeldb_type), intent(inout) :: modeldb
 
-#ifdef COUPLED
-    type( field_collection_type ), pointer :: depository => null()
-
-    if (l_esm_couple) then
-       depository => modeldb%fields%get_field_collection("depository")
-       ! Ensure coupling fields are updated at the end of a cycle to ensure the values
-       ! stored in and recovered from checkpoint dumps are correct and reproducible
-       ! when (re)starting subsequent runs!
-       call cpl_fld_update(modeldb)
-    endif
-#endif
-
     ! Multifile io finalisation
     if( multifile_io ) then
       call finalise_multifile_io( modeldb)

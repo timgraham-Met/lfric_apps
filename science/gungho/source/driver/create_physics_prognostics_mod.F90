@@ -884,8 +884,10 @@ contains
         mult='surface_tiles', twod=.true.))
     call processor%apply(make_spec('canhc_tile', main%surface, W3,              &
         mult='surface_tiles', twod=.true.))
-    call processor%apply(make_spec('gc_tile', main%surface, W3, mult='surface_tiles', &
-        twod=.true.))
+    call processor%apply(make_spec('gc_tile', main%surface, W3,                 &
+        mult='surface_tiles', twod=.true.))
+    call processor%apply(make_spec('snowinc', main%surface, W3,                 &
+        mult='surface_tiles', twod=.true.))
 
     ! Fields on surface tiles used by coupler, need checkpointing in coupled models
     call processor%apply(make_spec('tile_moisture_flux', main%surface, W3,      &
@@ -923,6 +925,8 @@ contains
                                    empty = (.not. l_urban2t) ))
     call processor%apply(make_spec('urbemisc', main%surface, W3, twod=.true., &
                                    empty = (.not. l_urban2t)))
+    call processor%apply(make_spec('inland_basin_flow', main%surface, W3,      &
+        twod=.true.))
     ! 2D fields, need checkpointing for urban-2-tile schemes
     call processor%apply(make_spec('urbwrr', main%surface, twod=.true., &
                                    ckp=l_urban2t, empty = (.not. l_urban2t) ))
