@@ -89,6 +89,7 @@ contains
     type( field_type ), pointer :: net_prim_prod          => null()
     type( field_type ), pointer :: canopy_water           => null()
     type( field_type ), pointer :: snowice_melt           => null()
+    type( field_type ), pointer :: snowinc                => null()
     type( field_type ), pointer :: snowice_sublimation    => null()
     type( field_type ), pointer :: urbztm                 => null()
 
@@ -168,6 +169,7 @@ contains
     call surface_fields%get_field('net_prim_prod', net_prim_prod)
     call surface_fields%get_field('canopy_water', canopy_water)
     call surface_fields%get_field('snowice_melt', snowice_melt)
+    call surface_fields%get_field('snowinc', snowinc)
     call surface_fields%get_field('snowice_sublimation', snowice_sublimation)
     call surface_fields%get_field('urbztm', urbztm)
 
@@ -255,6 +257,7 @@ contains
                            snowpack_density, snow_layer_thickness,             &
                            snow_layer_ice_mass, snow_layer_liq_mass,           &
                            snow_layer_temp, snow_layer_rgrain, snowice_melt,   &
+                           snowinc,                                            &
                            soil_sat_frac, water_table, wetness_under_soil,     &
                            surface_runoff, sub_surface_runoff,                 &
                            soil_moisture_content, grid_snow_mass,              &
@@ -274,7 +277,7 @@ contains
 
       ! Output the jules snow diagnostics
       call output_diags_for_jules_snow(tile_fraction, tile_snow_mass,          &
-                                     snowice_melt,                             &
+                                     snowice_melt, snowinc,                    &
                                      snow_depth, tile_snow_rgrain,             &
                                      snowpack_density, snow_layer_temp,        &
                                      snow_layer_thickness, snow_layer_ice_mass,&
