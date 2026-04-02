@@ -35,7 +35,7 @@ module gungho_diagnostics_driver_mod
   use formulation_config_mod,    only : use_physics,             &
                                         moisture_formulation,    &
                                         moisture_formulation_dry
-  use fs_continuity_mod,         only : W3, Wtheta
+  use fs_continuity_mod,         only : W3, Wtheta, W0
   use integer_field_mod,         only : integer_field_type
   use initialization_config_mod, only : ls_option,          &
                                         ls_option_analytic, &
@@ -103,6 +103,7 @@ contains
     type( field_type), pointer :: panel_id => null()
     type( field_type), pointer :: height_w3 => null()
     type( field_type), pointer :: height_wth => null()
+    type( field_type), pointer :: height_w0 => null()
     type( field_type), pointer :: lbc_u => null()
     type( field_type), pointer :: lbc_theta => null()
     type( field_type), pointer :: lbc_rho => null()
@@ -169,10 +170,12 @@ contains
       ! Get the finite element height
       height_w3 => get_height_fe(W3, mesh%get_id())
       height_wth => get_height_fe(Wtheta, mesh%get_id())
+      height_w0 => get_height_fe(W0, mesh%get_id())
     else
       ! Get the finite volume height
       height_w3 => get_height_fv(W3, mesh%get_id())
       height_wth => get_height_fv(Wtheta, mesh%get_id())
+      height_w0 => get_height_fv(W0, mesh%get_id())
     end if
 
     ! Scalar fields
@@ -185,6 +188,8 @@ contains
     call write_scalar_diagnostic('height_w3', height_w3, &
                                  modeldb%clock, mesh, nodal_output_on_w3)
     call write_scalar_diagnostic('height_wth', height_wth, &
+                                 modeldb%clock, mesh, nodal_output_on_w3)
+    call write_scalar_diagnostic('height_w0', height_w0, &
                                  modeldb%clock, mesh, nodal_output_on_w3)
 
     if (transport_ageofair) then
