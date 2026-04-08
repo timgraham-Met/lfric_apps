@@ -23,7 +23,7 @@ casim:
 
 jules:
     source: git@github.com:pdearnshaw/jules.git
-    ref: neg_snow_part2
+    ref: tag8.0_neg_snow_part2
 
 lfric_apps:
     source:
