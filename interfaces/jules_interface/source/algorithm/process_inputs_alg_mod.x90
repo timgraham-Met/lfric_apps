@@ -27,6 +27,7 @@ module process_inputs_alg_mod
                                         n_horiz_ang, n_horiz_layer
   use process_land_kernel_mod,    only: process_land_kernel_type
   use process_ssi_kernel_mod,     only: process_ssi_kernel_type
+  use process_sstanom_kernel_mod, only: process_sstanom_kernel_type
   use process_soil_kernel_mod,    only: process_soil_kernel_type
   use process_snow_kernel_mod,    only: process_snow_kernel_type
   use initial_ice_conductivity_kernel_mod, &
@@ -44,6 +45,7 @@ module process_inputs_alg_mod
                                   only: get_latitude_fv
   use log_mod,                    only : log_event, log_scratch_space,  &
                                          LOG_LEVEL_ERROR
+  use surface_config_mod,         only: sst_anomaly, sst_anomaly_none
 
   implicit none
 
@@ -304,6 +306,11 @@ contains
                                                snow_layer_liq_mass,                &
                                                snow_layer_temp, snow_layer_rgrain, &
                                                soil_temperature) )
+      end if
+
+      ! SST Anomaly
+      if (sst_anomaly /= sst_anomaly_none) then
+        call invoke(process_sstanom_kernel_type( tile_fraction, tile_temperature ))
       end if
 
     end if
