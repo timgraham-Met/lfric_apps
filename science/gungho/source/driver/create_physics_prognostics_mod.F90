@@ -958,6 +958,7 @@ contains
                                    empty = (.not. l_urban2t) ))
     call processor%apply(make_spec('urbemisc', main%surface, W3, twod=.true., &
                                    empty = (.not. l_urban2t)))
+
     ! 2D fields, need checkpointing for urban-2-tile schemes
     call processor%apply(make_spec('urbwrr', main%surface, twod=.true., &
                                    ckp=l_urban2t, empty = (.not. l_urban2t) ))
@@ -1055,6 +1056,8 @@ contains
     ! 2D fields, don't need checkpointing
     call processor%apply(make_spec('soil_moist_avail', main%soil, W3, twod=.true.))
     call processor%apply(make_spec('thermal_cond_wet_soil', main%soil, W3,      &
+        twod=.true.))
+    call processor%apply(make_spec('inland_basin_flow', main%soil, W3,          &
         twod=.true.))
 
     !========================================================================
