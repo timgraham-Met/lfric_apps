@@ -602,6 +602,7 @@
   <field id="snow__snow_mass" name="snow_mass_on_tiles" long_name="surface_snow_amount" unit="kg m-2" domain_ref="face" axis_ref="surface_tiles" />
   <field id="snow__grid_snow_mass" name="grid_snow_mass" long_name="grid_surface_snow_amount" unit="kg m-2" domain_ref="face" />
   <field id="snow__snowice_melt" name="snowice_melt" long_name="surface_snow_and_ice_melt_flux" unit="kg m-2 s-1" domain_ref="face" axis_ref="surface_tiles" />
+  <field id="snow__snowinc" name="snowinc" long_name="surface_snow_increment" unit="kg m-2" domain_ref="face" axis_ref="surface_tiles" />
   <field id="snow__grid_snowmelt" name="grid_snowmelt" long_name="grid_surface_snow_melt_flux" unit="kg m-2 s-1" domain_ref="face" />
   <field id="snow__snow_depth" name="snow_depth" long_name="snow_depth" unit="m" domain_ref="face" axis_ref="surface_tiles" />
   <field id="snow__tile_snow_rgrain" name="tile_snow_rgrain" long_name="tile_snow_grain_size" unit="microns" domain_ref="face" axis_ref="surface_tiles" />

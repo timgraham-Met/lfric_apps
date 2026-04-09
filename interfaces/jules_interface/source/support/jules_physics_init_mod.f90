@@ -626,9 +626,7 @@ contains
     l_fix_ustar_dust    = .true.
     l_fix_wind_snow     = .true.
     l_fix_lake_ice_temperatures = .true.
-    ! This is set to false because it causes issues with the production
-    ! compile setting on the intel compiler
-    l_fix_neg_snow     = .false.
+    l_fix_neg_snow     = .true.
 
     ! The following routine initialises 3D arrays which are used direct
     ! from modules throughout the JULES code base.

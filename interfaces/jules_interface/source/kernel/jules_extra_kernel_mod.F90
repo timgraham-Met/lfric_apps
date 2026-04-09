@@ -32,7 +32,7 @@ module jules_extra_kernel_mod
   !>
   type, public, extends(kernel_type) :: jules_extra_kernel_type
     private
-    type(arg_type) :: meta_args(58) = (/                                       &
+    type(arg_type) :: meta_args(59) = (/                                       &
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! ls_rain
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! conv_rain
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! ls_snow
@@ -83,6 +83,7 @@ module jules_extra_kernel_mod
          arg_type(GH_FIELD, GH_REAL, GH_READWRITE, ANY_DISCONTINUOUS_SPACE_5), & ! snow_layer_temp
          arg_type(GH_FIELD, GH_REAL, GH_READWRITE, ANY_DISCONTINUOUS_SPACE_5), & ! snow_layer_rgrain
          arg_type(GH_FIELD, GH_REAL, GH_READWRITE, ANY_DISCONTINUOUS_SPACE_2), & ! snowice_melt
+         arg_type(GH_FIELD, GH_REAL, GH_READWRITE, ANY_DISCONTINUOUS_SPACE_2), & ! snowinc
          arg_type(GH_FIELD, GH_REAL, GH_READWRITE, ANY_DISCONTINUOUS_SPACE_1), & ! soil_sat_frac
          arg_type(GH_FIELD, GH_REAL, GH_READWRITE, ANY_DISCONTINUOUS_SPACE_1), & ! water_table
          arg_type(GH_FIELD, GH_REAL, GH_READWRITE, ANY_DISCONTINUOUS_SPACE_1), & ! wetness_under_soil
@@ -158,6 +159,7 @@ contains
   !> @param[in,out] snow_layer_temp        Temperature of snow layer (K)
   !> @param[in,out] snow_layer_rgrain      Grain radius of snow layer (microns)
   !> @param[in,out] snowice_melt           Surface, canopy and sea ice, snow and ice melt rate (kg m-2 s-1)
+  !> @param[in,out] snowinc                Snow increment (kg m-2)
   !> @param[in,out] soil_sat_frac          Soil saturated fraction
   !> @param[in,out] water_table            Water table depth (m)
   !> @param[in,out] wetness_under_soil     Soil wetness below soil column
@@ -233,6 +235,7 @@ contains
                snow_layer_temp,            &
                snow_layer_rgrain,          &
                snowice_melt,               &
+               snowinc,                    &
                soil_sat_frac,              &
                water_table,                &
                wetness_under_soil,         &
@@ -430,6 +433,7 @@ contains
     real(kind=r_def), intent(inout) :: snow_under_canopy(undf_tile)
     real(kind=r_def), intent(inout) :: snowpack_density(undf_tile)
     real(kind=r_def), intent(inout) :: snowice_melt(undf_tile)
+    real(kind=r_def), intent(inout) :: snowinc(undf_tile)
 
     real(kind=r_def), intent(inout) :: snow_layer_thickness(undf_snow)
     real(kind=r_def), intent(inout) :: snow_layer_ice_mass(undf_snow)
@@ -899,6 +903,13 @@ contains
       end do
     end do
 
+    ! Snow increment
+    do l = 1, land_pts
+      do n = 1, nsurft
+        fluxes%snowinc_surft(l,n) = real(snowinc(map_tile(1,ainfo%land_index(l))+n-1), r_um)
+      end do
+    end do
+
     allocate(fsat_soilt(land_pts, nsoilt))
     allocate(zw_soilt(land_pts, nsoilt))
     allocate(sthzw_soilt(land_pts, nsoilt))
@@ -1008,6 +1019,8 @@ contains
         snowpack_density(map_tile(1,ainfo%land_index(l))+n-1) = real(progs%rho_snow_grnd_surft(l,n), r_def)
         ! Total snow and ice melt
         snowice_melt(map_tile(1,ainfo%land_index(l))+n-1) = real(fluxes%melt_surft(l,n), r_def)
+        ! Increment to lying snow
+        snowinc(map_tile(1,ainfo%land_index(l))+n-1) = real(fluxes%snowinc_surft(l,n), r_def)
       end do
     end do
     do n = 1, nsurft
