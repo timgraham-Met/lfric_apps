@@ -1054,6 +1054,8 @@ contains
     call processor%apply(make_spec('soil_moist_avail', main%soil, W3, twod=.true.))
     call processor%apply(make_spec('thermal_cond_wet_soil', main%soil, W3,      &
         twod=.true.))
+    call processor%apply(make_spec('inland_basin_flow', main%soil, W3,          &
+        twod=.true.))
 
     !========================================================================
     ! Fields owned by the snow scheme
