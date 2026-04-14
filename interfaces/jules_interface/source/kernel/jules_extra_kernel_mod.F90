@@ -32,7 +32,7 @@ module jules_extra_kernel_mod
   !>
   type, public, extends(kernel_type) :: jules_extra_kernel_type
     private
-    type(arg_type) :: meta_args(59) = (/                                       &
+    type(arg_type) :: meta_args(60) = (/                                       &
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! ls_rain
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! conv_rain
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! ls_snow
@@ -62,6 +62,7 @@ module jules_extra_kernel_mod
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! net_prim_prod
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_2), & ! snowice_sublimation
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_2), & ! surf_heat_flux
+         arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! inland_basin_flow
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_2), & ! canopy_evap
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_4), & ! water_extraction
          arg_type(GH_FIELD, GH_REAL, GH_READ,      ANY_DISCONTINUOUS_SPACE_1), & ! thermal_cond_wet_soil
@@ -138,6 +139,7 @@ contains
   !> @param[in]     net_prim_prod          Net Primary Productivity (kg m-2 s-1)
   !> @param[in]     snowice_sublimation    Sublimation of snow and ice (kg m-2 s-1)
   !> @param[in]     surf_heat_flux         Surface heat flux (W m-2)
+  !> @param[in]     inland_basin_flow      Inland flow of water from rivers to soil (kg m-2 s-1)
   !> @param[in]     canopy_evap            Canopy evaporation from land tiles (kg m-2 s-1)
   !> @param[in]     water_extraction       Extraction of water from each soil layer (kg m-2 s-1)
   !> @param[in]     thermal_cond_wet_soil  Thermal conductivity of soil (W m-1 K-1)
@@ -214,6 +216,7 @@ contains
                net_prim_prod,              &
                snowice_sublimation,        &
                surf_heat_flux,             &
+               inland_basin_flow,          &
                canopy_evap,                &
                water_extraction,           &
                thermal_cond_wet_soil,      &
@@ -424,6 +427,7 @@ contains
     real(kind=r_def), intent(in)    :: net_prim_prod(undf_2d)
     real(kind=r_def), intent(in)    :: thermal_cond_wet_soil(undf_2d)
     real(kind=r_def), intent(in)    :: urbztm(undf_2d)
+    real(kind=r_def), intent(in)    :: inland_basin_flow(undf_2d)
 
     real(kind=r_def), intent(inout) :: canopy_water(undf_tile)
     real(kind=r_def), intent(inout) :: tile_snow_mass(undf_tile)
@@ -913,6 +917,7 @@ contains
     allocate(fsat_soilt(land_pts, nsoilt))
     allocate(zw_soilt(land_pts, nsoilt))
     allocate(sthzw_soilt(land_pts, nsoilt))
+    allocate(inlandout_atm_gb(land_pts))
     do l = 1, land_pts
       ! Soil saturated fraction
       fsat_soilt(l,1) = real(soil_sat_frac(map_2d(1,ainfo%land_index(l))), r_um)
@@ -920,6 +925,8 @@ contains
       zw_soilt(l,1) = real(water_table(map_2d(1,ainfo%land_index(l))), r_um)
       ! Soil wetness below soil column
       sthzw_soilt(l,1) = real(wetness_under_soil(map_2d(1,ainfo%land_index(l))), r_um)
+      ! Inland basin flow
+      inlandout_atm_gb(l) = real(inland_basin_flow(map_2d(1,ainfo%land_index(l))), r_um)
     end do
 
   !----------------------------------------------------------------------------
@@ -940,7 +947,6 @@ contains
     allocate(dhf_surf_minus_soil(land_pts))
     allocate(tot_surf_runoff(land_pts))
     allocate(tot_sub_runoff(land_pts))
-    allocate(inlandout_atm_gb(land_pts))
 
     call surf_couple_extra(                                                   &
     !Driving data and associated INTENT(IN)
@@ -1062,8 +1068,10 @@ contains
       ! Wetness below soil column
       wetness_under_soil(map_2d(1,ainfo%land_index(l))) = real(sthzw_soilt(l,1), r_def)
       ! River runoffs
-      surface_runoff(map_2d(1,ainfo%land_index(l))) = real(fluxes%surf_roff_gb(l), r_def)
-      sub_surface_runoff(map_2d(1,ainfo%land_index(l))) = real(fluxes%sub_surf_roff_gb(l), r_def)
+      surface_runoff(map_2d(1,ainfo%land_index(l))) = real(fluxes%surf_roff_gb(l), r_def) *           &
+                                                                        flandg(ainfo%land_index(l), 1)
+      sub_surface_runoff(map_2d(1,ainfo%land_index(l))) = real(fluxes%sub_surf_roff_gb(l), r_def) *   &
+                                                                        flandg(ainfo%land_index(l), 1)
     end do
 
     if (.not. associated(soil_moisture_content, empty_real_data) ) then
