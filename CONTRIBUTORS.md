@@ -36,3 +36,6 @@
 | DanStoneMO          | Daniel Stone       | Met Office                       | 2026-02-26 |
 | ericaneininger      | Erica Neininger    | Met Office                       | 2026-03-02 |
 | MO-AlexW            | Alex West          | Met Office                       | 2026-04-15 |
+| mo-lucy-gordon      | Lucy Gordon        | Met Office                       | 2026-03-11 |
+| iboutle             | Ian Boutle         | Met Office                       | 2026-03-04 |
+| Pierre-siddall      | Pierre Siddall     | Met Office                       | 2026-03-02 |
